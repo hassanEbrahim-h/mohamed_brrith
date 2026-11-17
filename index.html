@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mohamed Birthday Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08070c;
+    --bg-2: #12101a;
+    --card: rgba(255,255,255,.045);
+    --line: rgba(232,190,100,.28);
+    --gold: #e8be64;
+    --gold-2: #b98a2e;
+    --gold-3: #fbe7b0;
+    --ink: #f6efe0;
+    --muted: #a99f8a;
+    --grad: linear-gradient(135deg, #fbe7b0 0%, #e8be64 40%, #b98a2e 100%);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Cairo", "Segoe UI", sans-serif; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; margin: 0; }
+  .script { font-family: "Great Vibes", cursive; font-weight: 400; }
+  .gold-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold-3); outline-offset: 3px; }
+
+  #sparks { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 60; pointer-events: none; }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px clamp(16px, 4vw, 48px);
+    background: linear-gradient(#08070cf2, #08070c00);
+    backdrop-filter: blur(6px);
+  }
+  .logo { font-size: 30px; line-height: 1; }
+  .links { display: flex; gap: clamp(14px, 3vw, 34px); font-size: 14px; }
+  .links a { color: var(--muted); padding: 6px 2px; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+  .links a:hover, .links a.on { color: var(--gold-3); border-color: var(--gold); }
+  .join {
+    font-size: 13px; font-weight: 700; color: #1a1205; background: var(--grad);
+    border: 0; border-radius: 999px; padding: 7px 20px;
+  }
+  @media (max-width: 640px) { .links { display: none; } }
+
+  /* ---------- Sections ---------- */
+  section { position: relative; z-index: 1; min-height: 100vh; padding: 110px clamp(18px, 6vw, 90px) 70px; display: flex; align-items: center; }
+  .wrap { width: 100%; max-width: 1100px; margin: 0 auto; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 5vw, 70px); align-items: center; }
+  @media (max-width: 800px) { .split { grid-template-columns: 1fr; text-align: center; } .split .art { order: -1; } }
+  .center { text-align: center; }
+  .sec-title { font-size: clamp(32px, 6vw, 52px); }
+  .sec-sub { color: var(--muted); margin: 6px 0 36px; }
+
+  .btn {
+    display: inline-block; border: 0; border-radius: 999px; padding: 13px 30px;
+    font-weight: 700; font-size: 16px; color: #1a1205; background: var(--grad);
+    box-shadow: 0 8px 30px rgba(232,190,100,.28); transition: transform .2s, box-shadow .2s;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 38px rgba(232,190,100,.45); }
+  .btn.ghost { background: transparent; color: var(--gold-3); border: 1.5px solid var(--gold); box-shadow: none; }
+
+  /* ---------- 1 Welcome ---------- */
+  #welcome { background: radial-gradient(60% 60% at 70% 45%, rgba(232,190,100,.16), transparent 70%); }
+  #welcome h1 { font-size: clamp(64px, 12vw, 128px); line-height: 1.05; padding-bottom: .12em; margin: 0 0 4px; }
+  #welcome .name { font-size: clamp(36px, 6vw, 60px); margin: 0 0 14px; }
+  #welcome p.lead { color: var(--muted); font-size: 18px; margin: 0 0 28px; }
+  .art svg { width: 100%; max-width: 460px; height: auto; filter: drop-shadow(0 0 40px rgba(232,190,100,.35)); }
+  .float { animation: bob 5s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-12px); } }
+
+  /* balloons */
+  .balloon { position: absolute; width: 56px; height: 72px; border-radius: 50% 50% 48% 48%; z-index: 0;
+    background: radial-gradient(circle at 32% 28%, #fbe7b0, #b98a2e 70%); opacity: .85;
+    animation: rise 14s linear infinite; }
+  .balloon::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1.5px; height: 90px; background: rgba(232,190,100,.5); }
+  .balloon:nth-of-type(1) { left: 4%;  animation-delay: -2s; }
+  .balloon:nth-of-type(2) { right: 5%; animation-delay: -8s; transform: scale(.8); }
+  .balloon:nth-of-type(3) { right: 34%; animation-delay: -5s; transform: scale(.6); opacity: .5; }
+  @keyframes rise { from { top: 105%; } to { top: -20%; } }
+
+  /* ---------- 2 Home ---------- */
+  #home { background: radial-gradient(55% 55% at 25% 50%, rgba(232,190,100,.12), transparent 70%); }
+  #home h2 { font-size: clamp(36px, 6vw, 60px); line-height: 1.1; margin-bottom: 14px; }
+  #home p { color: var(--muted); max-width: 40ch; margin: 0 0 26px; }
+  @media (max-width: 800px) { #home p { margin-inline: auto; } }
+  .today { color: var(--gold-3); font-weight: 700; margin: -10px 0 14px !important; }
+  .count { display: flex; gap: 12px; margin-bottom: 28px; }
+  @media (max-width: 800px) { .count { justify-content: center; } }
+  .count div { min-width: 70px; padding: 12px 8px; text-align: center; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+  .count b { display: block; font-family: "Playfair Display", serif; font-size: 30px; color: var(--gold-3); line-height: 1.1; }
+  .count span { font-size: 12px; color: var(--muted); }
+  #cakeHome svg { width: 100%; max-width: 440px; height: auto; filter: drop-shadow(0 0 40px rgba(232,190,100,.3)); }
+
+  /* ---------- 3 Memories ---------- */
+  .polaroids { display: flex; justify-content: center; flex-wrap: wrap; gap: 26px; }
+  .polaroid {
+    width: 210px; background: #f6f0e2; padding: 12px 12px 40px; border-radius: 3px; position: relative;
+    box-shadow: 0 18px 40px rgba(0,0,0,.55); transition: transform .3s; color: #2a2112; text-align: center; margin: 0;
+  }
+  .polaroid:nth-child(4n+1) { transform: rotate(-6deg); }
+  .polaroid:nth-child(4n+2) { transform: rotate(2deg) translateY(-14px); }
+  .polaroid:nth-child(4n+3) { transform: rotate(7deg); }
+  .polaroid:nth-child(4n+4) { transform: rotate(-3deg) translateY(10px); }
+  .polaroid:hover { transform: rotate(0) scale(1.06) translateY(-8px); z-index: 3; }
+  .polaroid .ph { height: 190px; display: block; background-size: cover; background-position: center 22%; position: relative; overflow: hidden; }
+  .polaroid .cap { position: absolute; bottom: 7px; left: 0; right: 0; font-family: "Great Vibes", cursive; font-size: 24px; }
+  .ph.p1 { background: linear-gradient(#ff9a4d, #6b2b55 70%, #1b1030); }
+  .ph.p2 { background: radial-gradient(circle at 30% 30%, #fff 0 1px, transparent 2px), radial-gradient(circle at 70% 20%, #fff 0 1.5px, transparent 2px), radial-gradient(circle at 55% 55%, #fff 0 1px, transparent 2px), linear-gradient(160deg, #1b1f5a, #4a2b7a 60%, #14102e); }
+  .ph.p3 { background: linear-gradient(#ffd37a, #ff9a4d 55%, #1a1230 56%); }
+  .ph.p4 { background: linear-gradient(160deg, #e8be64, #6b4a12); }
+  .note { text-align: center; color: var(--muted); font-size: 13px; margin: 14px 0 0; }
+  .empty { color: var(--muted); grid-column: 1 / -1; }
+
+  /* ---------- 4 Wishes ---------- */
+  .wishes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 30px; text-align: left; }
+  .wish { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); animation: pop .5s ease; }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+  .wish .who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--grad); color: #1a1205; display: grid; place-items: center; font-weight: 700; flex: none; }
+  .wish b { color: var(--gold-3); }
+  .wish p { margin: 0; color: #e8dfca; }
+  form.add { display: grid; gap: 10px; max-width: 480px; margin: 0 auto; }
+  form.add input, form.add textarea {
+    font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--line);
+    border-radius: 14px; padding: 12px 16px; width: 100%;
+  }
+  form.add input:focus, form.add textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,190,100,.2); }
+  form.add textarea { min-height: 84px; resize: vertical; }
+
+  /* ---------- 5 Surprise ---------- */
+  #surprise { background: radial-gradient(50% 55% at 50% 55%, rgba(232,190,100,.15), transparent 70%); }
+  .gift { display: block; margin: 0 auto; background: none; border: 0; padding: 0; width: min(320px, 80vw); }
+  .gift svg { width: 100%; height: auto; overflow: visible; }
+  .gift .lid { transform-origin: 50% 100%; transition: transform .8s cubic-bezier(.2,1.3,.4,1); transform-box: fill-box; }
+  .gift.open .lid { transform: translateY(-70px) rotate(-18deg); }
+  .gift .rays { opacity: 0; transition: opacity .6s; }
+  .gift.open .rays { opacity: 1; }
+  .gift:not(.open) svg { animation: bob 3s ease-in-out infinite; }
+  .reveal { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .8s, opacity .8s; }
+  .reveal.on { max-height: 300px; opacity: 1; margin-top: 18px; }
+  .reveal h3 { font-size: 34px; margin-bottom: 6px; }
+  .reveal p { color: var(--muted); max-width: 44ch; margin: 0 auto; }
+  .tap { margin-top: 18px; color: var(--muted); font-size: 14px; }
+
+  /* ---------- 6 Final ---------- */
+  #final { background: radial-gradient(55% 55% at 50% 40%, rgba(232,190,100,.12), transparent 70%); }
+  #final h2 { font-size: clamp(54px, 10vw, 100px); line-height: 1.1; padding-bottom: .1em; }
+  #final .name { font-size: clamp(30px, 5vw, 48px); margin: 4px 0 8px; }
+  #cakeFinal { display: block; margin: 8px auto 4px; background: none; border: 0; padding: 0; width: min(380px, 85vw); }
+  #cakeFinal svg { width: 100%; height: auto; filter: drop-shadow(0 0 40px rgba(232,190,100,.3)); }
+  .flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flick .35s ease-in-out infinite alternate; transition: opacity .35s; }
+  @keyframes flick { from { transform: scale(1) rotate(-4deg); } to { transform: scale(1.12,1.08) rotate(4deg); } }
+  .out .flame { animation: none; opacity: 0; }
+  footer { position: relative; z-index: 1; text-align: center; padding: 30px 16px 50px; color: var(--muted); font-size: 14px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .float, .balloon, .flame, .gift:not(.open) svg, .wish { animation: none; }
+    .gift .lid, .reveal, .btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sparks" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<nav>
+  <a class="logo script gold-text" href="#welcome" aria-label="Home"><span class="nm">Mohamed</span></a>
+  <div class="links">
+    <a href="#home">Home</a><a href="#memories">Memories</a><a href="#wishes">Wishes</a><a href="#surprise">Surprise</a>
+  </div>
+  <a class="join" href="#wishes">Join</a>
+</nav>
+
+<!-- ============ 1. WELCOME ============ -->
+<section id="welcome">
+  <div class="balloon"></div><div class="balloon"></div><div class="balloon"></div>
+  <div class="wrap split">
+    <div class="art">
+      <svg class="float" viewBox="0 0 400 360" role="img" aria-label="Golden gift box">
+        <defs>
+          <linearGradient id="gd1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe7b0"/><stop offset=".5" stop-color="#e8be64"/><stop offset="1" stop-color="#9a6f1d"/></linearGradient>
+          <linearGradient id="bk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2530"/><stop offset="1" stop-color="#0d0b12"/></linearGradient>
+        </defs>
+        <ellipse cx="200" cy="335" rx="150" ry="14" fill="#e8be64" opacity=".2"/>
+        <rect x="70" y="170" width="260" height="160" rx="8" fill="url(#bk1)" stroke="#e8be64" stroke-opacity=".5"/>
+        <rect x="185" y="170" width="30" height="160" fill="url(#gd1)"/>
+        <rect x="56" y="130" width="288" height="52" rx="8" fill="url(#bk1)" stroke="#e8be64" stroke-opacity=".6"/>
+        <rect x="185" y="130" width="30" height="52" fill="url(#gd1)"/>
+        <path d="M200 130 C150 60 80 70 110 118 C128 140 190 134 200 130Z" fill="url(#gd1)"/>
+        <path d="M200 130 C250 60 320 70 290 118 C272 140 210 134 200 130Z" fill="url(#gd1)"/>
+        <path d="M200 130 C150 100 125 100 120 112 M200 130 C250 100 275 100 280 112" stroke="#9a6f1d" stroke-width="3" fill="none"/>
+        <circle cx="200" cy="128" r="14" fill="url(#gd1)"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="script gold-text">Happy<br>Birthday</h1>
+      <p class="name script gold-text nm">Mohamed</p>
+      <p class="lead">Another year of greatness…</p>
+      <a class="btn" href="#home" id="celebrate">Let's Celebrate 🎁</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. HOME ============ -->
+<section id="home">
+  <div class="wrap split">
+    <div>
+      <h2>Happy Birthday<br><span class="gold-text nm">Mohamed</span> ♥</h2>
+      <p>May all your dreams come true, and may this new year of your life be the best one!</p>
+      <p class="today" id="today" hidden>🎉 It's his birthday today!</p>
+      <div class="count" id="count" aria-live="off">
+        <div><b id="cd">00</b><span>Days</span></div>
+        <div><b id="ch">00</b><span>Hours</span></div>
+        <div><b id="cm">00</b><span>Min</span></div>
+        <div><b id="cs">00</b><span>Sec</span></div>
+      </div>
+      <a class="btn ghost" href="#memories">Explore More</a>
+    </div>
+    <div class="art" id="cakeHome"></div>
+  </div>
+</section>
+
+<!-- ============ 3. MEMORIES ============ -->
+<section id="memories">
+  <div class="wrap center">
+    <h2 class="sec-title">Our Memories ♥</h2>
+    <p class="sec-sub">A collection of beautiful moments</p>
+    <div class="polaroids" id="polaroids"></div>
+  </div>
+</section>
+
+<!-- ============ 4. WISHES ============ -->
+<section id="wishes">
+  <div class="wrap center">
+    <h2 class="sec-title">Birthday Wishes ♥</h2>
+    <p class="sec-sub">Heartfelt messages from your loved ones</p>
+    <div class="wishes" id="wishList"></div>
+    <form class="add" id="wishForm">
+      <input id="wName" placeholder="Your name" maxlength="30" required>
+      <textarea id="wText" placeholder="Write your wish…" maxlength="220" required></textarea>
+      <button class="btn" type="submit">Add Your Wish ✍️</button>
+    </form>
+    <p class="note" id="wishNote" role="status"></p>
+  </div>
+</section>
+
+<!-- ============ 5. SURPRISE ============ -->
+<section id="surprise">
+  <div class="wrap center">
+    <h2 class="sec-title">Surprise! <span style="font-size:.7em">🎁</span></h2>
+    <p class="sec-sub">A special gift for you…</p>
+    <button class="gift" id="gift" aria-label="Open the gift">
+      <svg viewBox="0 0 300 280">
+        <defs>
+          <linearGradient id="gd2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe7b0"/><stop offset=".5" stop-color="#e8be64"/><stop offset="1" stop-color="#9a6f1d"/></linearGradient>
+          <linearGradient id="bk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2530"/><stop offset="1" stop-color="#0d0b12"/></linearGradient>
+        </defs>
+        <g class="rays" stroke="#fbe7b0" stroke-width="3" stroke-linecap="round" opacity=".8">
+          <path d="M150 120 L150 20"/><path d="M150 120 L60 40"/><path d="M150 120 L240 40"/><path d="M150 120 L20 90"/><path d="M150 120 L280 90"/>
+        </g>
+        <rect x="50" y="130" width="200" height="130" rx="6" fill="url(#bk2)" stroke="#e8be64" stroke-opacity=".5"/>
+        <rect x="135" y="130" width="30" height="130" fill="url(#gd2)"/>
+        <g class="lid">
+          <rect x="38" y="96" width="224" height="42" rx="6" fill="url(#bk2)" stroke="#e8be64" stroke-opacity=".6"/>
+          <rect x="135" y="96" width="30" height="42" fill="url(#gd2)"/>
+          <path d="M150 96 C110 40 56 52 80 88 C94 106 142 100 150 96Z" fill="url(#gd2)"/>
+          <path d="M150 96 C190 40 244 52 220 88 C206 106 158 100 150 96Z" fill="url(#gd2)"/>
+          <circle cx="150" cy="94" r="12" fill="url(#gd2)"/>
+        </g>
+      </svg>
+    </button>
+    <div class="reveal" id="reveal">
+      <h3 class="script gold-text" style="font-size:44px">A year full of happiness</h3>
+      <p>Success and love, always. You deserve every good thing that comes your way. Enjoy! 🎉</p>
+    </div>
+    <p class="tap" id="tap">Tap the gift to open it</p>
+  </div>
+</section>
+
+<!-- ============ 6. FINAL ============ -->
+<section id="final">
+  <div class="wrap center">
+    <h2 class="script gold-text">Happy Birthday</h2>
+    <p class="name script gold-text nm">Mohamed ♡</p>
+    <p class="sec-sub" style="margin-bottom:6px">Keep shining…</p>
+    <button id="cakeFinal" aria-label="Blow out the candles"></button>
+    <p class="sec-sub" id="blowHint" style="margin:0 0 20px">Make a wish, then tap the cake to blow out the candles.</p>
+    <button class="btn" id="thanks">Thank You ♥</button>
+  </div>
+</section>
+
+<footer>Designed with ♥ for <span class="nm">Mohamed</span></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ===================== SETTINGS — change these ===================== */
+const NAME = "Mohamed";
+const BIRTH_MONTH = 11;   // 1-12
+const BIRTH_DAY   = 18;   // 1-31
+
+/* PHOTOS — put the pictures inside the "photos" folder and list them here.
+   Add or remove lines as you like. Leave src empty ("") to show a placeholder. */
+const PHOTOS = [
+  { src: "photos/1.jpg", caption: "Brothers",     pos: "center 22%" },
+  { src: "photos/2.jpg", caption: "Good Times",   pos: "center 30%" },
+  { src: "photos/3.jpg", caption: "Together",     pos: "center 38%" },
+  { src: "photos/4.jpg", caption: "Looking sharp", pos: "center 28%" },
+  // { src: "photos/5.jpg", caption: "Eid 2025", pos: "center 25%" },   // pos = which part of the photo stays in view
+];
+
+/* WISHES BACKEND (Firebase) — paste your project's config here so every visitor
+   sees everyone's wishes. Leave apiKey empty and wishes stay on this device only. */
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  appId: ""
+};
+/* =================================================================== */
+
+const $ = id => document.getElementById(id);
+document.querySelectorAll(".nm").forEach(e => e.textContent = e.textContent.replace("Mohamed", NAME));
+document.title = NAME + " Birthday Experience";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const safe = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+               set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+
+/* ---------- Cake SVG ---------- */
+function cakeSVG(crown, id) {
+  const candles = [150, 175, 200, 225, 250].map((x, i) => {
+    const h = [34, 40, 46, 40, 34][i];
+    return `<g><rect x="${x-4}" y="${96 - h}" width="8" height="${h}" rx="2" fill="url(#cg${id})"/>
+      <g class="flame"><path d="M${x} ${96 - h - 26} C${x+9} ${96 - h - 12} ${x+6} ${96 - h - 1} ${x} ${96 - h - 1} C${x-6} ${96 - h - 1} ${x-9} ${96 - h - 12} ${x} ${96 - h - 26}Z" fill="#ffd36e"/>
+      <ellipse cx="${x}" cy="${96 - h - 8}" rx="3" ry="5" fill="#fff6d6"/></g></g>`;
+  }).join("");
+  const pearls = Array.from({length: 13}, (_, i) => `<circle cx="${95 + i*17.5}" cy="${188}" r="4.5" fill="url(#cg${id})"/>`).join("");
+  const pearls2 = Array.from({length: 17}, (_, i) => `<circle cx="${62 + i*17.5}" cy="${252}" r="4.5" fill="url(#cg${id})"/>`).join("");
+  const crownSVG = crown ? `<path transform="translate(0,-34)" d="M170 40 L180 4 L195 28 L200 0 L205 28 L220 4 L230 40Z" fill="url(#cg${id})" opacity=".95"/>` : "";
+  return `<svg viewBox="0 -50 400 360" role="img" aria-label="Golden chocolate birthday cake">
+    <defs>
+      <linearGradient id="cg${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe7b0"/><stop offset=".5" stop-color="#e8be64"/><stop offset="1" stop-color="#9a6f1d"/></linearGradient>
+      <linearGradient id="ch${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2a22"/><stop offset="1" stop-color="#150e0b"/></linearGradient>
+    </defs>
+    <ellipse cx="200" cy="296" rx="185" ry="12" fill="#e8be64" opacity=".22"/>
+    ${crownSVG}
+    ${candles}
+    <!-- top tier -->
+    <rect x="130" y="96" width="140" height="48" rx="6" fill="url(#ch${id})"/>
+    <path d="M130 100 q10 22 20 0 q10 26 20 0 q10 20 20 0 q10 26 20 0 q10 20 20 0 q10 24 20 0 q10 18 10 0 V96 H130Z" fill="url(#cg${id})"/>
+    <!-- mid tier -->
+    <rect x="95" y="144" width="210" height="52" rx="6" fill="url(#ch${id})"/>
+    <path d="M95 148 q12 26 24 0 q12 22 24 0 q12 28 24 0 q12 20 24 0 q12 26 24 0 q12 22 24 0 q12 28 24 0 q12 18 18 0 V144 H95Z" fill="url(#cg${id})"/>
+    ${pearls}
+    <!-- bottom tier -->
+    <rect x="62" y="196" width="276" height="62" rx="6" fill="url(#ch${id})"/>
+    <path d="M62 200 q14 30 28 0 q14 26 28 0 q14 32 28 0 q14 24 28 0 q14 30 28 0 q14 26 28 0 q14 32 28 0 q14 24 28 0 q14 28 28 0 V196 H62Z" fill="url(#cg${id})"/>
+    ${pearls2}
+    <rect x="62" y="258" width="276" height="10" rx="4" fill="url(#cg${id})"/>
+  </svg>`;
+}
+$("cakeHome").innerHTML = cakeSVG(true, "H");
+$("cakeFinal").innerHTML = cakeSVG(false, "F");
+
+/* blow out */
+const cf = $("cakeFinal");
+cf.addEventListener("click", () => {
+  const out = cf.classList.toggle("out");
+  $("blowHint").textContent = out ? "Your wish is on its way, " + NAME + " ✨ (tap again to relight)" : "Make a wish, then tap the cake to blow out the candles.";
+  if (out) burst(innerWidth / 2, innerHeight * .4, 140);
+});
+$("thanks").addEventListener("click", () => { burst(innerWidth/2, innerHeight*.5, 200); });
+$("celebrate").addEventListener("click", () => burst(innerWidth/2, innerHeight*.5, 120));
+
+/* ---------- Countdown ---------- */
+function tick() {
+  const now = new Date();
+  let t = new Date(now.getFullYear(), BIRTH_MONTH - 1, BIRTH_DAY);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const isToday = +t === +today;
+  if (!isToday && t < now) t = new Date(now.getFullYear() + 1, BIRTH_MONTH - 1, BIRTH_DAY);
+  let diff = isToday ? 0 : Math.max(0, t - now);
+  $("today").hidden = !isToday;
+  const p = n => String(n).padStart(2, "0");
+  $("cd").textContent = p(Math.floor(diff / 864e5));
+  $("ch").textContent = p(Math.floor(diff / 36e5) % 24);
+  $("cm").textContent = p(Math.floor(diff / 6e4) % 60);
+  $("cs").textContent = p(Math.floor(diff / 1e3) % 60);
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------- Memories (from PHOTOS) ---------- */
+const placeholders = ["p1", "p2", "p3", "p4"];
+$("polaroids").replaceChildren(...PHOTOS.map((p, i) => {
+  const f = document.createElement("figure"); f.className = "polaroid";
+  const ph = document.createElement("span"); ph.className = "ph " + (p.src ? "" : placeholders[i % 4]);
+  if (p.src) ph.style.backgroundImage = `url("${encodeURI(p.src)}")`;
+  if (p.src && p.pos) ph.style.backgroundPosition = p.pos;
+  const cap = document.createElement("span"); cap.className = "cap"; cap.textContent = p.caption || "";
+  f.append(ph, cap); return f;
+}));
+
+/* ---------- Wishes ---------- */
+const hasDB = !!FIREBASE_CONFIG.apiKey && window.firebase;
+let store = null, localWishes = [];
+function card(w) {
+  const d = document.createElement("div"); d.className = "wish";
+  const who = document.createElement("div"); who.className = "who";
+  const av = document.createElement("div"); av.className = "avatar"; av.textContent = (w.n[0] || "?").toUpperCase();
+  const nm = document.createElement("b"); nm.textContent = w.n;
+  who.append(av, nm);
+  const p = document.createElement("p"); p.textContent = w.t;
+  d.append(who, p); return d;
+}
+function renderWishes(list) {
+  const l = $("wishList");
+  if (!list.length) { const e = document.createElement("p"); e.className = "empty"; e.textContent = "No wishes yet. Be the first to write one."; l.replaceChildren(e); return; }
+  l.replaceChildren(...list.map(card));
+}
+if (hasDB) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  store = firebase.firestore().collection("wishes");
+  store.orderBy("ts", "asc").limit(300).onSnapshot(
+    snap => renderWishes(snap.docs.map(d => d.data())),
+    () => { $("wishNote").textContent = "Can't load the wishes right now. Check your connection and refresh."; }
+  );
+} else {
+  try { localWishes = JSON.parse(localStorage.getItem("wishes") || "[]"); } catch (e) {}
+  renderWishes(localWishes);
+  if (["localhost", "127.0.0.1", ""].includes(location.hostname))
+    $("wishNote").textContent = "Setup note: add your Firebase config in the code so wishes are shared with everyone. Right now they are saved on this device only.";
+}
+$("wishForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const w = { n: $("wName").value.trim(), t: $("wText").value.trim(), ts: Date.now() };
+  if (!w.n || !w.t) return;
+  const btn = e.target.querySelector("button"); btn.disabled = true;
+  try {
+    if (store) await store.add(w);
+    else { localWishes.push(w); try { localStorage.setItem("wishes", JSON.stringify(localWishes)); } catch (_) {} renderWishes(localWishes); }
+    e.target.reset(); burst(innerWidth / 2, innerHeight * .6, 90);
+  } catch (err) { $("wishNote").textContent = "Your wish wasn't saved. Try again in a moment."; }
+  btn.disabled = false;
+});
+
+/* ---------- Surprise ---------- */
+$("gift").addEventListener("click", () => {
+  const g = $("gift"), open = g.classList.toggle("open");
+  $("reveal").classList.toggle("on", open);
+  $("tap").textContent = open ? "Tap again to close it" : "Tap the gift to open it";
+  if (open) { const r = g.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height * .3, 160); }
+});
+
+/* ---------- Nav highlight ---------- */
+const links = [...document.querySelectorAll(".links a")];
+const io = new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + en.target.id));
+}), { threshold: .5 });
+document.querySelectorAll("section").forEach(s => io.observe(s));
+
+/* ---------- Ambient gold sparks (background) ---------- */
+const sc = $("sparks"), sx = sc.getContext("2d");
+let dots = [];
+function rs() { sc.width = innerWidth; sc.height = innerHeight; dots = Array.from({ length: reduce ? 0 : 55 }, () => ({
+  x: Math.random() * sc.width, y: Math.random() * sc.height, r: Math.random() * 1.8 + .4, v: Math.random() * .25 + .05, a: Math.random() }));
+}
+addEventListener("resize", () => { rs(); rf(); }); rs();
+function ambient() {
+  sx.clearRect(0, 0, sc.width, sc.height);
+  for (const d of dots) {
+    d.y -= d.v; d.a += .02; if (d.y < -5) { d.y = sc.height + 5; d.x = Math.random() * sc.width; }
+    sx.globalAlpha = (Math.sin(d.a) + 1) / 2 * .7; sx.fillStyle = "#e8be64";
+    sx.beginPath(); sx.arc(d.x, d.y, d.r, 0, 7); sx.fill();
+  }
+  sx.globalAlpha = 1; requestAnimationFrame(ambient);
+}
+if (!reduce) ambient();
+
+/* ---------- Gold burst (foreground) ---------- */
+const fc = $("fx"), fx = fc.getContext("2d");
+let ps = [], raf = null;
+function rf() { fc.width = innerWidth; fc.height = innerHeight; } rf();
+const gold = ["#fbe7b0", "#e8be64", "#b98a2e", "#fff6d6", "#f6efe0"];
+function burst(x, y, n = 100) {
+  if (reduce) return;
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, v = Math.random() * 9 + 2;
+    ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: Math.random() * 6 + 3, r: Math.random() * 6, vr: (Math.random() - .5) * .4,
+      c: gold[(Math.random() * gold.length) | 0], life: 0, max: 120 + Math.random() * 60, star: Math.random() < .35 });
+  }
+  if (!raf) raf = requestAnimationFrame(step);
+}
+function step() {
+  fx.clearRect(0, 0, fc.width, fc.height);
+  ps = ps.filter(p => p.life < p.max);
+  for (const p of ps) {
+    p.life++; p.vy += .22; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    fx.save(); fx.globalAlpha = Math.max(0, 1 - p.life / p.max); fx.translate(p.x, p.y); fx.rotate(p.r); fx.fillStyle = p.c;
+    if (p.star) { fx.beginPath(); for (let k = 0; k < 8; k++) { const rad = k % 2 ? p.s * .45 : p.s; fx.lineTo(Math.cos(k * Math.PI / 4) * rad, Math.sin(k * Math.PI / 4) * rad); } fx.fill(); }
+    else fx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6);
+    fx.restore();
+  }
+  raf = ps.length ? requestAnimationFrame(step) : null;
+}
+setTimeout(() => burst(innerWidth * .7, innerHeight * .35, 90), 600);
+</script>
+</body>
+</html>
